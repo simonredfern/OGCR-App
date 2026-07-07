@@ -80,7 +80,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		const activityParcelVers =
 			activityParcelVerResponse[`${ENTITY_ACTIVITY_PARCEL_VERIFICATION}_list`] || [];
 		const parcelIds = [
-			...new Set(activityParcelVers.map((v: Record<string, unknown>) => v.parcel_id as string))
+			...new Set<string>(
+				activityParcelVers.map((v: Record<string, unknown>) => v.parcel_id as string)
+			)
 		];
 
 		// Fetch each parcel and parcel-level verifications

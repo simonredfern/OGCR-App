@@ -10,13 +10,7 @@
 
 	let { data, children } = $props();
 
-	let isAuthenticated = $state(false);
-
-	if (data.email) {
-		isAuthenticated = true;
-	} else {
-		isAuthenticated = false;
-	}
+	let isAuthenticated = $derived(!!data.email);
 
 	// Build breadcrumbs from current path
 	function getBreadcrumbs() {

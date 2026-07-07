@@ -30,8 +30,8 @@ class KeyCloakStrategy implements OAuth2ProviderStrategy {
 
 	async initialize(config: WellKnownUri): Promise<OAuth2ClientWithConfig> {
 		const client = new OAuth2ClientWithConfig(
-			env.KEYCLOAK_OAUTH_CLIENT_ID,
-			env.KEYCLOAK_OAUTH_CLIENT_SECRET,
+			env.KEYCLOAK_OAUTH_CLIENT_ID ?? '',
+			env.KEYCLOAK_OAUTH_CLIENT_SECRET ?? '',
 			env.APP_CALLBACK_URL,
 			'keycloak'
 		);
