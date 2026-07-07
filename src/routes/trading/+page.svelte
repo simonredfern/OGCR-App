@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { untrack } from 'svelte';
 	import CurrentBankPicker from '$lib/components/CurrentBankPicker.svelte';
+	import ObpErrorDisplay from '$lib/components/ObpErrorDisplay.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -99,9 +100,8 @@
 				</p>
 
 				{#if data.error}
-					<div class="card p-4 preset-filled-error-500 mb-4">
-						<p class="font-semibold">Could not load accounts</p>
-						<p class="text-sm">{data.error}</p>
+					<div class="mb-4">
+						<ObpErrorDisplay error={data.error} title="Could not load accounts" />
 					</div>
 				{/if}
 

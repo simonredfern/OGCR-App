@@ -6,6 +6,7 @@
 	import { Home, ChevronRight } from '@lucide/svelte';
 
 	import LightSwitch from '$lib/components/LightSwitch.svelte';
+	import PageRoleCheck from '$lib/components/PageRoleCheck.svelte';
 
 	let { data, children } = $props();
 
@@ -90,6 +91,12 @@
 
 	<!-- Main content -->
 	<main class="flex-1 overflow-auto">
-		{@render children()}
+		{#if isAuthenticated}
+			<PageRoleCheck pageRoles={data.pageRoles} userEntitlements={data.userEntitlements}>
+				{@render children()}
+			</PageRoleCheck>
+		{:else}
+			{@render children()}
+		{/if}
 	</main>
 </div>

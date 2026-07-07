@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { Building2, Plus, RefreshCw, Mail, MapPin, Wallet, Link2 } from '@lucide/svelte';
+	import ObpErrorDisplay from '$lib/components/ObpErrorDisplay.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -36,9 +37,8 @@
 			<a href="/login" class="btn preset-filled-primary-500">Login</a>
 		</div>
 	{:else if data.error}
-		<div class="card p-8 preset-filled-surface-100-900">
-			<h2 class="h3 text-error-500 mb-2">Error loading operators</h2>
-			<pre class="bg-surface-200-800 p-4 rounded overflow-auto text-sm">{data.error}</pre>
+		<div class="max-w-3xl">
+			<ObpErrorDisplay error={data.error} title="Error loading operators" />
 		</div>
 	{:else if operators.length === 0}
 		<div class="card p-8 preset-filled-surface-100-900 max-w-2xl">
