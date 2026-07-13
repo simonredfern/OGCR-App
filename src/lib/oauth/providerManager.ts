@@ -220,6 +220,14 @@ class OAuth2ProviderManager {
 	}
 
 	/**
+	 * Returns the current status of a single provider, reflecting the latest
+	 * periodic refresh (lookup by name, not a snapshot taken at call-site setup)
+	 */
+	getProviderStatus(provider: string): ProviderStatus | undefined {
+		return this.status.providers.find((p) => p.provider === provider);
+	}
+
+	/**
 	 * Returns if the OAuth2 providers are ready
 	 */
 	isReady(): boolean {

@@ -9,6 +9,10 @@ import RedisStore from 'svelte-kit-connect-redis';
 import { oauth2ProviderManager } from '$lib/oauth/providerManager';
 import { SessionOAuthHelper } from '$lib/oauth/sessionHelper';
 import { redisService } from '$lib/redis/services/RedisService';
+import { healthCheckRegistry, OIDCHealthCheckService } from '$lib/health-check';
+import { RedisHealthCheckService } from '$lib/server/health-check/RedisHealthCheckService';
+import { PUBLIC_OBP_BASE_URL } from '$env/static/public';
+import { env } from '$env/dynamic/private';
 
 // Constants
 const DEFAULT_PORT = 5175;
@@ -32,6 +36,59 @@ checkServerPort();
 const redisClient = redisService.getClient();
 
 await oauth2ProviderManager.start();
+
+function initHealthChecks() {
+	healthCheckRegistry.register({
+		serviceName: 'OBP API',
+		url: `${PUBLIC_OBP_BASE_URL}/obp/v5.1.0/root`,
+		details: {
+			PUBLIC_OBP_BASE_URL
+		}
+	});
+
+	// Sessions are stored in Redis, so its health belongs on the status page too
+	healthCheckRegistry.register(new RedisHealthCheckService(redisService));
+
+	const testTokenDisabled = env.OIDC_HEALTHCHECK_TEST_TOKEN === 'false';
+	const testTokenStrict = env.OIDC_HEALTHCHECK_TEST_TOKEN_STRICT === 'true';
+
+	const credentialsFor = (provider: string): { clientId?: string; clientSecret?: string } => {
+		if (testTokenDisabled) return {};
+		switch (provider) {
+			case 'obp-oidc':
+				return { clientId: env.OBP_OAUTH_CLIENT_ID, clientSecret: env.OBP_OAUTH_CLIENT_SECRET };
+			case 'keycloak':
+				return {
+					clientId: env.KEYCLOAK_OAUTH_CLIENT_ID,
+					clientSecret: env.KEYCLOAK_OAUTH_CLIENT_SECRET
+				};
+			default:
+				// Google does not support the client_credentials grant — skip the token test
+				return {};
+		}
+	};
+
+	// Register every known provider — including ones that failed to initialize —
+	// so /status shows the full OIDC picture, not only the working providers.
+	// The providerStatus callback reads live manager state, so a provider that
+	// comes up (or dies) after boot flips on the status page without a restart.
+	for (const p of oauth2ProviderManager.getAllProviders()) {
+		const { clientId, clientSecret } = credentialsFor(p.provider);
+		healthCheckRegistry.register(
+			new OIDCHealthCheckService({
+				serviceName: `OAuth2: ${p.provider}`,
+				providerStatus: () => oauth2ProviderManager.getProviderStatus(p.provider),
+				clientId,
+				clientSecret,
+				strictClientCredentials: testTokenStrict
+			})
+		);
+	}
+
+	healthCheckRegistry.startAll();
+}
+
+initHealthChecks();
 
 function needsAuthorization(routeId: string): boolean {
 	// protected routes are put in the /(protected)/ route group
