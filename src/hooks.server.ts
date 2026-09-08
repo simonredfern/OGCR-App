@@ -13,12 +13,16 @@ import { healthCheckRegistry, OIDCHealthCheckService } from '$lib/health-check';
 import { RedisHealthCheckService } from '$lib/server/health-check/RedisHealthCheckService';
 import { PUBLIC_OBP_BASE_URL } from '$env/static/public';
 import { env } from '$env/dynamic/private';
+import { building } from '$app/environment';
 
 // Constants
-const DEFAULT_PORT = 5175;
+// Dev server port, must match `server.port` in vite.config.ts and the OAuth callback URL.
+const DEFAULT_PORT = 5200;
 
-// Check if server is running on non-default port
+// Check if the dev server is running on a port other than the one the OAuth callback
+// URL was registered for. Skipped in production, where PORT is set by the container.
 function checkServerPort() {
+	if (process.env.NODE_ENV === 'production') return;
 	const envPort = process.env.PORT || process.env.VITE_PORT || process.env.SERVER_PORT;
 
 	if (envPort && parseInt(envPort) !== DEFAULT_PORT) {
@@ -29,8 +33,24 @@ function checkServerPort() {
 	}
 }
 
+// Session cookie signing secret. Must be set in production; in development a fixed
+// insecure default keeps `npm run dev` working without extra setup.
+function resolveSessionSecret(): string {
+	const secret = env.SESSION_SECRET;
+	if (secret && secret.length >= 16) return secret;
+	if (process.env.NODE_ENV === 'production' && !building) {
+		throw new Error(
+			'SESSION_SECRET must be set (at least 16 characters) in production. ' +
+				'Generate one with: openssl rand -hex 32'
+		);
+	}
+	logger.warn('SESSION_SECRET is not set (or too short). Using an insecure development default.');
+	return 'ogcr-app-insecure-dev-session-secret';
+}
+
 // Startup scripts
 checkServerPort();
+const sessionSecret = resolveSessionSecret();
 
 // Init Redis
 const redisClient = redisService.getClient();
@@ -164,7 +184,7 @@ const checkAuthorization: Handle = async ({ event, resolve }) => {
 export const handle: Handle = sequence(
 	sveltekitSessionHandle({
 		name: 'ogcr-app-connect.sid',
-		secret: 'secret',
+		secret: sessionSecret,
 		store: new RedisStore({
 			client: redisClient,
 			prefix: 'ogcr-app-session:'
