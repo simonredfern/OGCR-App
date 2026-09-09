@@ -69,6 +69,23 @@ function initHealthChecks() {
 	// Sessions are stored in Redis, so its health belongs on the status page too
 	healthCheckRegistry.register(new RedisHealthCheckService(redisService));
 
+	// The tokenizer, if it exposes its health endpoint. It writes to the chain
+	// and never to OBP, so nothing on the OBP side reveals whether it is
+	// running: the chain mirror runs the opposite way, and a tokenization
+	// backlog of zero on a dead tokenizer with no new work looks like success.
+	// Optional, because the tokenizer is not part of every deployment; without
+	// the URL it is simply not monitored rather than permanently unhealthy.
+	const tokenizerHealthUrl = env.TOKENIZER_HEALTH_URL;
+	if (tokenizerHealthUrl) {
+		healthCheckRegistry.register({
+			serviceName: 'OGCR Tokenizer',
+			url: tokenizerHealthUrl,
+			details: {
+				TOKENIZER_HEALTH_URL: tokenizerHealthUrl
+			}
+		});
+	}
+
 	const testTokenDisabled = env.OIDC_HEALTHCHECK_TEST_TOKEN === 'false';
 	const testTokenStrict = env.OIDC_HEALTHCHECK_TEST_TOKEN_STRICT === 'true';
 
