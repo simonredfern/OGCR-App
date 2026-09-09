@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { Link2, RefreshCw, ExternalLink } from '@lucide/svelte';
+	import { Link2, RefreshCw, ExternalLink, HelpCircle } from '@lucide/svelte';
 	import ChainHeartbeat from '$lib/components/ChainHeartbeat.svelte';
 	import { totalMirrored } from '$lib/chain/heartbeat';
 	import { explorerLinks, shortenHex } from '$lib/chain/explorer';
@@ -44,7 +44,10 @@
 	<div class="flex items-center gap-4">
 		<Link2 class="size-8 text-primary-500" />
 		<h1 class="h1">Chain</h1>
-		<button class="btn btn-sm preset-outlined-surface-500 ml-auto" onclick={refresh} disabled={refreshing}>
+		<a href="/help" class="anchor inline-flex items-center gap-1 text-sm ml-auto">
+			<HelpCircle class="size-4" /> How tokens work
+		</a>
+		<button class="btn btn-sm preset-outlined-surface-500" onclick={refresh} disabled={refreshing}>
 			<RefreshCw class="size-4 {refreshing ? 'animate-spin' : ''}" />
 			<span>Refresh</span>
 		</button>

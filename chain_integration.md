@@ -283,8 +283,9 @@ mints on chain, the mirror reads the chain and writes back to OBP. If the
 tokenizer stopped, the chain would simply stop gaining tokens and the mirror
 would carry on reporting a perfectly steady connection.
 
-The tokenizer also has no write path to OBP today, so it cannot report on itself
-without new credentials and roles in a repo we do not own.
+The tokenizer also never writes to OBP. That is a stated design rule in its own
+docs, not an oversight: you create the entities, it reacts. So it cannot report
+on itself through the registry without breaking that rule.
 
 So `/status` shows a **tokenization backlog** instead: registry records that
 qualify for tokenization, against those mirrored back from the chain. It
@@ -295,11 +296,20 @@ shows green on a heartbeat and a growing backlog here.
 What counts as "should be tokenized" differs per type, and each rule is shown in
 the table rather than hidden in code:
 
-| Type | Rule | Grounding |
-|---|---|---|
-| Parcels | Verified ownership verification | The tokenizer's own documented trigger |
-| Activities | Verified activity verification | Assumed; mirrors the gate the marketplace already uses, and is labelled as an assumption in the UI |
-| Certificates | Every certificate of compliance | A certificate is itself the verification |
+| Type | Rule |
+|---|---|
+| Parcels | Verified `parcel_owner_verification` |
+| Activities | Verified `activity_verification` |
+| Certificates | Every certificate of compliance |
+| Credit batches | One per positive benefit amount on a verified `activity_monitoring_period_verification` |
+
+Every rule is read from the tokenizer's source rather than inferred. An earlier
+version of this page guessed at two of them and got one wrong and one missing:
+the activity rule turned out to be correct but was labelled an assumption, and
+credit batches were absent entirely. Credit batches are keyed on chain by the
+activity's NFT token id, so a batch whose activity is not yet tokenized shows as
+pending and says it is waiting on the ActivityNFT, which is the real dependency:
+the tokenizer defers it for exactly that reason.
 
 Two deliberate choices:
 
@@ -312,9 +322,22 @@ Two deliberate choices:
 - **Records on chain that the registry does not expect are listed separately.**
   That is not a backlog, but it is worth seeing.
 
-Still missing, and worth doing when the tokenizer repo can be changed: a
-liveness record from the tokenizer itself. The two fail differently, since a
-backlog of zero on a dead tokenizer with no new work looks healthy.
+### Tokenizer liveness
+
+The backlog answers "is it keeping up". It cannot answer "is it alive", because
+a backlog of zero on a dead tokenizer with no new work looks like success. The
+tokenizer now answers that itself over HTTP, at `GET /healthz`, which keeps the
+never-writes-to-OBP rule intact and fills in the readiness and liveness probes
+its deployment previously lacked.
+
+Set `TOKENIZER_HEALTH_URL` in the app and it joins `/status` through the
+existing health-check registry, polled on a timer with no credentials needed.
+Left unset it is simply not monitored rather than permanently unhealthy.
+
+It reports more than process liveness: `degraded` when the last poll of OBP
+failed, and `stalled` when the poll loop has stopped ticking for more than three
+intervals. Both are cases where the process is alive but not working, which a
+bare port check would call healthy.
 
 ### On the status page
 
