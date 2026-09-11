@@ -2,6 +2,8 @@
 	import type { PageData } from './$types';
 	import { Link2, RefreshCw, ExternalLink, HelpCircle } from '@lucide/svelte';
 	import ChainHeartbeat from '$lib/components/ChainHeartbeat.svelte';
+	import Timestamp from '$lib/components/Timestamp.svelte';
+	import { formatAge } from '$lib/chain/heartbeat';
 	import { totalMirrored } from '$lib/chain/heartbeat';
 	import { explorerLinks, shortenHex } from '$lib/chain/explorer';
 	import { invalidateAll } from '$app/navigation';
@@ -70,7 +72,17 @@
 		<ChainHeartbeat heartbeat={data.heartbeat} />
 
 		<div class="card p-6 preset-filled-surface-100-900">
-			<h2 class="h4 mb-1">Last mirror run</h2>
+			<div class="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+				<h2 class="h4">Last mirror run</h2>
+				{#if status?.synced_at}
+					<div class="text-sm text-surface-600-400">
+						<Timestamp iso={status.synced_at} />
+						{#if data.heartbeat.ageSeconds !== null}
+							<span class="text-surface-500">· {formatAge(data.heartbeat.ageSeconds)} ago</span>
+						{/if}
+					</div>
+				{/if}
+			</div>
 			<p class="text-surface-600-400 text-sm mb-4">
 				Records written by OGCR-chain-cache on its most recent pass.
 				{#if status?.mirrored_types}

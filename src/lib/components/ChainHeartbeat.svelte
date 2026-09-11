@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Activity, AlertTriangle, CircleOff, HelpCircle } from '@lucide/svelte';
 	import { formatAge, type Heartbeat, type HeartbeatState } from '$lib/chain/heartbeat';
+	import Timestamp from '$lib/components/Timestamp.svelte';
 
 	let {
 		heartbeat,
@@ -79,7 +80,7 @@
 				{#if status?.synced_at}
 					<p class="text-xs text-surface-500 mt-4">
 						Considered stalled after {heartbeat.staleAfterSeconds}s without a sync.
-						Last recorded at {status.synced_at}.
+						Last recorded at <Timestamp iso={status.synced_at} />.
 					</p>
 				{/if}
 			</div>
