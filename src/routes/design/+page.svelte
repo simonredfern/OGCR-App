@@ -1,4 +1,7 @@
 <script lang="ts">
+	// Token values below mirror ../../ogcr-design-system-reference.css, which
+	// is pinned to @majistudio/ogcr-design-system 1.1.0 (upstream commit
+	// e947133). Update both together — see ../../../design_system_integration.md.
 	const skeletonScales = [
 		{ name: 'primary', label: 'Primary (OGCR Blue)' },
 		{ name: 'secondary', label: 'Secondary (OGCR Green)' },
@@ -14,9 +17,10 @@
 		{ name: '--text-primary', value: '#0f3655' },
 		{ name: '--text-secondary', value: '#6a8196' },
 		{ name: '--text-neutral', value: '#334155' },
-		{ name: '--text-positive', value: '#416c51' },
+		{ name: '--text-positive', value: '#4f8263' },
 		{ name: '--text-negative', value: '#b91c1c' },
-		{ name: '--text-warning', value: '#c2410c' }
+		{ name: '--text-warning', value: '#c2410c' },
+		{ name: '--text-progress', value: '#265277' }
 	];
 
 	const dsSurfaceTokens = [
@@ -27,7 +31,8 @@
 		{ name: '--surface-inverted', value: '#443321' },
 		{ name: '--surface-positive', value: '#e2efe6' },
 		{ name: '--surface-warning', value: '#ffedd5' },
-		{ name: '--surface-negative', value: '#fee2e2' }
+		{ name: '--surface-negative', value: '#fee2e2' },
+		{ name: '--surface-progress', value: '#e2edf6' }
 	];
 
 	const dsBorderTokens = [
@@ -39,16 +44,23 @@
 		{ name: '--border-positive-light', value: '#c5dfce' },
 		{ name: '--border-warning-light', value: '#fed7aa' },
 		{ name: '--border-negative-light', value: '#fecaca' },
-		{ name: '--border-negative-strong', value: '#dc2626' }
+		{ name: '--border-negative-strong', value: '#dc2626' },
+		{ name: '--border-neutral-strong', value: '#57534e' },
+		{ name: '--border-positive-strong', value: '#5e9975' },
+		{ name: '--border-warning-strong', value: '#ea580c' }
 	];
 
 	const dsInteractionTokens = [
 		{ name: '--interaction-primary-default', value: '#4f8263' },
-		{ name: '--interaction-primary-hover', value: '#416c51' },
-		{ name: '--interaction-primary-active', value: '#416c51' },
+		{ name: '--interaction-primary-hover', value: '#335641' },
+		{ name: '--interaction-primary-active', value: '#335641' },
 		{ name: '--interaction-primary-focus', value: '#e2efe6' },
-		{ name: '--interaction-secondary-focus', value: '#e2d0bf' },
-		{ name: '--focus-ring-error', value: '#fecaca' }
+		{ name: '--interaction-secondary-default', value: '#ffffff' },
+		{ name: '--interaction-secondary-hover', value: '#1c3d59' },
+		{ name: '--interaction-secondary-active', value: '#1c3d59' },
+		{ name: '--interaction-secondary-focus', value: '#c3daed' },
+		{ name: '--interaction-tertiary-active', value: '#e2efe6' },
+		{ name: '--focus-ring-error (deprecated)', value: '#fecaca' }
 	];
 
 	const spacing = [
@@ -67,12 +79,12 @@
 		{ name: '--radius-m', size: '8px' },
 		{ name: '--radius-l', size: '12px' },
 		{ name: '--radius-xl', size: '16px' },
-		{ name: '--radius-full', size: '999px' }
+		{ name: '--radius-full', size: '9999px' }
 	];
 
 	const fontSizes = [
-		{ name: '--font-size-xs', size: '14px' },
-		{ name: '--font-size-s', size: '16px' },
+		{ name: '--font-size-xs', size: '10px' },
+		{ name: '--font-size-s', size: '14px' },
 		{ name: '--font-size-m', size: '18px' },
 		{ name: '--font-size-l', size: '20px' },
 		{ name: '--font-size-xl', size: '24px' },
