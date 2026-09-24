@@ -4,7 +4,7 @@ How this app consumes the OGCR Design System: why it hand-mirrors the token valu
 instead of installing the package, what is pinned to which upstream commit, how to
 re-reconcile when upstream moves, and which components have been ported to Svelte.
 
-This is a record of *our consumption* of the design system. It is not the design
+This is a record of _our consumption_ of the design system. It is not the design
 system's specification — that lives upstream at
 `packages/design-system/docs/design-system.md` and is the authority. Where this
 document and the upstream spec disagree about the design system, the spec wins.
@@ -16,24 +16,24 @@ This app is **SvelteKit 5 + Skeleton 4 + Tailwind v4**. None of its 42 component
 imported here. So we mirror its **token values** by hand and build the Svelte components
 ourselves against the published spec.
 
-Everything in this document exists so that mirroring is a *checkable* operation rather
+Everything in this document exists so that mirroring is a _checkable_ operation rather
 than a copy that silently rots — which is exactly what happened to the previous copy
 (see the [drift log](#drift-log)).
 
 ## Upstream provenance (what we are pinned to)
 
-| | |
-| --- | --- |
-| Repo | `https://github.com/Maji-Studio/ogcr` |
-| Remote (SSH) | `git@github.com:Maji-Studio/ogcr.git` |
-| Local clone | `~/Documents/workspace_2024/Maji-Studio/ogcr` |
-| Branch | `main` |
-| Reconciled against commit | `182d425e76ce204826c9b2440930b5a8f7d02094` (`182d425`, 2026-09-07) |
-| Package | `@majistudio/ogcr-design-system` **1.1.0** (also on npm) |
-| Token source files | `packages/design-system/src/styles/palette.css` (all 62 colour literals)<br>`packages/design-system/src/styles/theme.css` (spacing / radius / type / elevation / motion) |
-| Written spec | `packages/design-system/docs/design-system.md` |
-| Last upstream commit that changed those tokens | `e9471331f60bec1d76c91198771be4f392602cb7` (`e947133`, 2026-08-13) — *"feat(ds): align tokens to figma and ship the full stylesheet contract"* |
-| Figma source of truth | file `2P6XrQJhT8I39IR5LGK7RT` (OGCR – Design System); upstream last reconciled it 2026-08-13 |
+|                                                |                                                                                                                                                                          |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Repo                                           | `https://github.com/Maji-Studio/ogcr`                                                                                                                                    |
+| Remote (SSH)                                   | `git@github.com:Maji-Studio/ogcr.git`                                                                                                                                    |
+| Local clone                                    | `~/Documents/workspace_2024/Maji-Studio/ogcr`                                                                                                                            |
+| Branch                                         | `main`                                                                                                                                                                   |
+| Reconciled against commit                      | `182d425e76ce204826c9b2440930b5a8f7d02094` (`182d425`, 2026-09-07)                                                                                                       |
+| Package                                        | `@majistudio/ogcr-design-system` **1.1.0** (also on npm)                                                                                                                 |
+| Token source files                             | `packages/design-system/src/styles/palette.css` (all 62 colour literals)<br>`packages/design-system/src/styles/theme.css` (spacing / radius / type / elevation / motion) |
+| Written spec                                   | `packages/design-system/docs/design-system.md`                                                                                                                           |
+| Last upstream commit that changed those tokens | `e9471331f60bec1d76c91198771be4f392602cb7` (`e947133`, 2026-08-13) — _"feat(ds): align tokens to figma and ship the full stylesheet contract"_                           |
+| Figma source of truth                          | file `2P6XrQJhT8I39IR5LGK7RT` (OGCR – Design System); upstream last reconciled it 2026-08-13                                                                             |
 
 **The token pin that matters is `e947133`, not `182d425`.** `182d425` is just the repo HEAD
 we happened to read. If `git log e947133..main -- packages/design-system/src/styles/` is
@@ -50,8 +50,8 @@ treat it as historical only.
 
 Installing `@majistudio/ogcr-design-system` and importing its `styles.css` is technically
 possible in a Tailwind v4 app, and it would give us exact tokens. We are not doing it yet,
-for one specific reason documented in the upstream spec (§1, *Consuming the shipped
-stylesheet*):
+for one specific reason documented in the upstream spec (§1, _Consuming the shipped
+stylesheet_):
 
 > **`--spacing` is pinned to `1px` globally.** […] Stock Tailwind sets `.25rem` […]
 > **This rescales existing app markup that used the stock 4px-step scale: `p-4` is 4px
@@ -76,15 +76,14 @@ upstream values. It is reference/documentation; nothing imports it.
 
 **`src/ogcr-theme.css`** — the active theme. Two distinct things live here:
 
-1. *The named DS token block* — a 1:1 mirror of upstream values. Keep exact.
-2. *The Skeleton `--color-*` ramps* — **derived, not mirrored.** These are interpolated
-   11-step ramps with DS values pinned at particular steps (e.g. `--color-secondary-400`
-   is `brand-green-500`, `-500` is `interaction-primary-default`). The in-between steps
+1. _The named DS token block_ — a 1:1 mirror of upstream values. Keep exact.
+2. _The Skeleton `--color-_`ramps* — **derived, not mirrored.** These are interpolated
+11-step ramps with DS values pinned at particular steps (e.g.`--color-secondary-400`is`brand-green-500`, `-500`is`interaction-primary-default`). The in-between steps
    have no upstream counterpart and are ours. Do not "reconcile" them against upstream;
    only the anchor steps need to agree.
 
    One consequence as of 1.1.0: `--color-secondary-600` / `--color-success-600`
-   (`#416c51`) no longer correspond to *any* DS token — `interaction-primary-hover` moved
+   (`#416c51`) no longer correspond to _any_ DS token — `interaction-primary-hover` moved
    away from that value. They remain valid ramp steps. Code that wants the true brand
    hover must use `var(--interaction-primary-hover)`, not `secondary-600`.
 
@@ -92,23 +91,23 @@ upstream values. It is reference/documentation; nothing imports it.
 
 ### 2026-09-22 — first reconciliation
 
-The previous mirror claimed to be a *"verbatim copy of
-OGCR-design/ogcr-design-system/src/index.css captured 2026-05-04."* That file no longer
+The previous mirror claimed to be a _"verbatim copy of
+OGCR-design/ogcr-design-system/src/index.css captured 2026-05-04."_ That file no longer
 exists upstream — it was split into `palette.css` + `theme.css`. Diffing the mirror
 against the real palette found, of 62 upstream colour tokens: **38 identical, 5 drifted,
 19 missing.**
 
 Drifted values (old → correct):
 
-| Token | Was | Now | Note |
-| --- | --- | --- | --- |
-| `--text-positive` | `#416c51` | `#4f8263` | |
-| `--icon-positive` | `#416c51` | `#4f8263` | |
-| `--interaction-primary-hover` | `#416c51` | `#335641` | |
-| `--interaction-primary-active` | `#416c51` | `#335641` | |
+| Token                           | Was       | Now       | Note                                   |
+| ------------------------------- | --------- | --------- | -------------------------------------- |
+| `--text-positive`               | `#416c51` | `#4f8263` |                                        |
+| `--icon-positive`               | `#416c51` | `#4f8263` |                                        |
+| `--interaction-primary-hover`   | `#416c51` | `#335641` |                                        |
+| `--interaction-primary-active`  | `#416c51` | `#335641` |                                        |
 | `--interaction-secondary-focus` | `#e2d0bf` | `#c3daed` | a beige where the brand has light blue |
 
-The green moves are upstream's deliberate *active-green vs. selection-navy* split
+The green moves are upstream's deliberate _active-green vs. selection-navy_ split
 (`68073dd` in the archived repo).
 
 Added (were missing): `yellow-300`, `text-progress`, `icon-progress`, the four `icon-*-light`
@@ -123,8 +122,8 @@ Non-colour drift found in the same pass:
   Corrected to `xs: 10px`, `s: 14px`. **This is the one change here that can reflow
   existing markup** — anything using `--font-size-xs`/`-s` directly gets smaller.
 - **`--radius-full`** was `999px`; upstream is `9999px`.
-- **`--focus-ring-error` was removed upstream.** Per the spec: *"It existed, referenced
-  nothing, and was removed; use `--focus-error` (the full shadow) instead."* Ours is kept
+- **`--focus-ring-error` was removed upstream.** Per the spec: _"It existed, referenced
+  nothing, and was removed; use `--focus-error` (the full shadow) instead."_ Ours is kept
   for now, marked deprecated, because app code still references it.
 
 ## How to check whether upstream has changed
@@ -155,8 +154,9 @@ Update all four together, or the next reader gets a different answer depending o
 file they open:
 
 1. `src/ogcr-design-system-reference.css` — the mirror
-2. `src/ogcr-theme.css` — the *named DS token block* only, not the Skeleton ramps
-3. `src/routes/design/+page.svelte` — the gallery hardcodes the values as display strings
+2. `src/ogcr-theme.css` — the _named DS token block_ only, not the Skeleton ramps
+3. `src/routes/design/+page.svelte` — the gallery hardcodes the values as display strings,
+   and its _Integration status_ section restates the provenance block and drift log
 4. this document — the provenance block, and a row in the drift log below
 
 Then bump `PINNED_VERSION` in the script.
@@ -176,20 +176,49 @@ Empty output means nothing has touched the token sources since our pin.
 ## Component port status
 
 We build these in Svelte ourselves. Upstream section numbers refer to
-`packages/design-system/docs/design-system.md`.
+`packages/design-system/docs/design-system.md`. The table below is also rendered on
+`/design`, under _Component port status_, with the ported components shown live — keep
+the two in step.
 
-| Upstream component | Spec | Status here |
-| --- | --- | --- |
-| Card | §4.3 | not yet ported |
-| Pill | §4.6 | not yet ported |
-| Message | §4.9 | not yet ported |
-| KPI | §4.11 | not yet ported |
-| Table | §4.14 | not yet ported |
-| Select / Combobox | §4.17 / §4.18 | not yet ported — build on `bits-ui` |
-| Tabs | §4.23 | not yet ported — build on `bits-ui` |
-| Breadcrumb | §4.26 | not yet ported |
-| Pagination | §4.27 | not yet ported |
-| Tooltip | §4.34 | not yet ported — build on `bits-ui` |
+| Upstream component | Spec          | Status here                                                                                                                                                                    |
+| ------------------ | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Card               | §4.3          | **ported** — `src/lib/components/Card.svelte`                                                                                                                                  |
+| Pill               | §4.6          | **ported** — `src/lib/components/Pill.svelte`                                                                                                                                  |
+| Message            | §4.9          | not needed — the app's `ObpErrorDisplay` already handles OBP errors (it detects missing-entitlement messages and renders `MissingRoleAlert`), which DS Message would not       |
+| KPI                | §4.11         | **ported** — `src/lib/components/Kpi.svelte`                                                                                                                                   |
+| Table              | §4.14         | **ported** — `src/lib/components/Table.svelte`. Upstream is `@tanstack/react-table`; sorting and the empty state are reimplemented in Svelte, all visual decisions transcribed |
+| Select / Combobox  | §4.17 / §4.18 | not yet ported — build on `bits-ui`                                                                                                                                            |
+| Tabs               | §4.23         | not yet ported — build on `bits-ui`                                                                                                                                            |
+| Breadcrumb         | §4.26         | not needed — see note below                                                                                                                                                    |
+| Pagination         | §4.27         | not yet ported                                                                                                                                                                 |
+| Tooltip            | §4.34         | not yet ported — build on `bits-ui`                                                                                                                                            |
+
+The app layout renders a breadcrumb trail in the header for **every** route, built
+from the URL path against a `labelMap` in `src/routes/+layout.svelte`. A page-level
+Breadcrumb on top of that reads as a duplicate, so §4.26 is deliberately not ported.
+Add new route segments to that `labelMap` instead, or the trail renders the raw
+lowercase segment. Port the component only if a page needs a breadcrumb _instead of_
+the header trail.
+
+### Porting conventions
+
+`Card.svelte` is the reference for the ones that follow.
+
+- **Take values from the shipped component, not the spec's CSS** (see the trap below).
+- **Express them as scoped CSS over our named tokens.** Upstream components are Tailwind
+  utility strings (`bg-surface-light`, `rounded-16`); those utilities do not exist in this
+  app, because we mirror token values rather than importing the design system's stylesheet.
+  The declarations are the same either way.
+- **Namespace the class names `ogcr-`.** Skeleton ships a global `.card`, and Svelte's
+  style scoping does not stop _its_ rules from landing on our elements — only ours from
+  leaking out.
+- **Dark mode is ours, not theirs.** The design system has no dark palette and its light
+  tokens are fixed values, so a component styled purely from them stays light on a dark
+  page. Add a `:global([data-mode='dark'])` block falling back to the Skeleton dark
+  surfaces the rest of the app uses. When upstream ships a dark palette, those blocks
+  should be replaced by `--ds-*` overrides rather than extended.
+- **Document any API extension** in the component header. `Card` has two: `href` (renders
+  as an anchor so the whole card is one click target) and a `leading` snippet for an icon.
 
 ### A trap in the spec
 
@@ -199,7 +228,7 @@ We build these in Svelte ourselves. Upstream section numbers refer to
 Tailwind utility strings with `data-slot` anatomy (e.g. Card is
 `flex flex-col gap-16 p-16 bg-surface-light border border-border-medium rounded-16`).
 
-This survives upstream's own *"reconcile the spec with figma and code"* pass (`d345312`),
+This survives upstream's own _"reconcile the spec with figma and code"_ pass (`d345312`),
 so it is live in 1.1.0. Upstream's `CLAUDE.md` says the spec wins over code on
 disagreement; for this particular disagreement it should not. **Read the component source,
 use the doc for behaviour, anatomy and rationale.**
@@ -219,7 +248,7 @@ no mechanical mapping — `svelte-kit-sessions` + Redis + arctic OAuth (farmer u
 better-auth), form actions, `adapter-node`. The markup is mechanical; the auth flow is not,
 because verifying it means round-trips against a live OBP server.
 
-What would *not* need rewriting: `src/lib/` — roughly 4,470 lines of framework-free
+What would _not_ need rewriting: `src/lib/` — roughly 4,470 lines of framework-free
 TypeScript (`obp/`, `chain/`, `oauth/`, `marketplace/`, `reference/`, `health-check/`).
 Only three files there import anything SvelteKit-specific.
 
