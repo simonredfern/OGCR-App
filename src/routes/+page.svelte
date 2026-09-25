@@ -1,10 +1,6 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import ChainHeartbeat from '$lib/components/ChainHeartbeat.svelte';
 	import Card from '$lib/components/Card.svelte';
 	import { Leaf, Building2, Store, Link2, Palette, Library } from '@lucide/svelte';
-
-	let { data }: { data: PageData } = $props();
 
 	// Destinations are the app's existing routes — Operators lives under /my
 	// because the page is scoped to the operators linked to the signed-in user.
@@ -70,13 +66,5 @@
 				</Card>
 			{/each}
 		</nav>
-
-		{#if data.heartbeat}
-			<!-- Shown on the landing page so the chain connection is visible without
-			     anyone going looking for it. That is the whole point of a heartbeat. -->
-			<div class="mt-8 flex justify-center">
-				<ChainHeartbeat heartbeat={data.heartbeat} compact />
-			</div>
-		{/if}
 	</div>
 </div>
