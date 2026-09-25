@@ -3,7 +3,8 @@ import { obp_requests } from '$lib/obp/requests';
 import {
 	ENTITY_ACTIVITY,
 	ENTITY_OPERATOR,
-	ENTITY_ACTIVITY_VERIFICATION
+	ENTITY_ACTIVITY_VERIFICATION,
+	entityPath
 } from '$lib/constants/entities';
 import { OBPRequestError } from '$lib/obp/errors';
 import { getAllListings, type ActivityListing } from '$lib/marketplace/listings';
@@ -81,7 +82,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	// activity_verification.status_code to all be declared `indexed: true` — see
 	// [[ogcr-dynamic-entity-join-queries]] memory for why, and the OBP-API bug this
 	// tripped over.
-	let activityEndpoint = `/obp/dynamic-entity/${ENTITY_ACTIVITY}`;
+	let activityEndpoint = entityPath(ENTITY_ACTIVITY);
 	if (verificationFilter !== 'all') {
 		const quantifier = verificationFilter === 'verified' ? 'obp_exists' : 'obp_not_exists';
 		const joinParams = new URLSearchParams();
@@ -99,7 +100,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		// Kept in its own try so an operator-fetch failure still renders the activities.
 		const operatorNames = new Map<string, string>();
 		try {
-			const opResponse = await debugGet('Operators', `/obp/dynamic-entity/${ENTITY_OPERATOR}`);
+			const opResponse = await debugGet('Operators', entityPath(ENTITY_OPERATOR));
 			const operators = (opResponse[`${ENTITY_OPERATOR}_list`] || []) as OperatorRecord[];
 			for (const op of operators) {
 				if (op.operator_id && op.legal_name) operatorNames.set(op.operator_id, op.legal_name);

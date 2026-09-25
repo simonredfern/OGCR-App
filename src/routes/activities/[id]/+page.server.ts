@@ -8,7 +8,8 @@ import {
 	ENTITY_PARCEL_MONITORING_PERIOD_VERIFICATION,
 	ENTITY_ACTIVITY_VERIFICATION,
 	ENTITY_ACTIVITY_MONITORING_PERIOD_VERIFICATION,
-	ENTITY_ACTIVITY_PARCEL_VERIFICATION
+	ENTITY_ACTIVITY_PARCEL_VERIFICATION,
+	entityPath
 } from '$lib/constants/entities';
 import { OBPRequestError } from '$lib/obp/errors';
 import { getCountries, type CountryRecord } from '$lib/reference/countries';
@@ -38,17 +39,17 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			activityVerResponse,
 			activityMonitoringVerResponse
 		] = await Promise.all([
-			obp_requests.get(`/obp/dynamic-entity/${ENTITY_ACTIVITY}/${activityId}`, accessToken),
+			obp_requests.get(`${entityPath(ENTITY_ACTIVITY)}/${activityId}`, accessToken),
 			obp_requests.get(
-				`/obp/dynamic-entity/${ENTITY_ACTIVITY_PARCEL_VERIFICATION}?${activityIdFilter}`,
+				`${entityPath(ENTITY_ACTIVITY_PARCEL_VERIFICATION)}?${activityIdFilter}`,
 				accessToken
 			),
 			obp_requests.get(
-				`/obp/dynamic-entity/${ENTITY_ACTIVITY_VERIFICATION}?${activityIdFilter}`,
+				`${entityPath(ENTITY_ACTIVITY_VERIFICATION)}?${activityIdFilter}`,
 				accessToken
 			),
 			obp_requests.get(
-				`/obp/dynamic-entity/${ENTITY_ACTIVITY_MONITORING_PERIOD_VERIFICATION}?${activityIdFilter}`,
+				`${entityPath(ENTITY_ACTIVITY_MONITORING_PERIOD_VERIFICATION)}?${activityIdFilter}`,
 				accessToken
 			)
 		]);
@@ -63,7 +64,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		if (operatorId) {
 			try {
 				const operatorResponse = await obp_requests.get(
-					`/obp/dynamic-entity/${ENTITY_OPERATOR}/${operatorId}`,
+					`${entityPath(ENTITY_OPERATOR)}/${operatorId}`,
 					accessToken
 				);
 				const operator = operatorResponse[ENTITY_OPERATOR] || operatorResponse;
@@ -90,13 +91,13 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		// Fetch each parcel and parcel-level verifications
 		const parcelPromises = parcelIds.map(async (parcelId: string) => {
 			const [parcelResponse, ownerVerResponse, monitoringVerResponse] = await Promise.all([
-				obp_requests.get(`/obp/dynamic-entity/${ENTITY_PARCEL}/${parcelId}`, accessToken),
+				obp_requests.get(`${entityPath(ENTITY_PARCEL)}/${parcelId}`, accessToken),
 				obp_requests.get(
-					`/obp/dynamic-entity/${ENTITY_PARCEL_OWNERSHIP_VERIFICATION}?parcel_id=${parcelId}`,
+					`${entityPath(ENTITY_PARCEL_OWNERSHIP_VERIFICATION)}?parcel_id=${parcelId}`,
 					accessToken
 				),
 				obp_requests.get(
-					`/obp/dynamic-entity/${ENTITY_PARCEL_MONITORING_PERIOD_VERIFICATION}?parcel_id=${parcelId}`,
+					`${entityPath(ENTITY_PARCEL_MONITORING_PERIOD_VERIFICATION)}?parcel_id=${parcelId}`,
 					accessToken
 				)
 			]);
@@ -192,7 +193,7 @@ export const actions: Actions = {
 
 		try {
 			await obp_requests.post(
-				`/obp/dynamic-entity/${ENTITY_ACTIVITY_VERIFICATION}`,
+				entityPath(ENTITY_ACTIVITY_VERIFICATION),
 				body,
 				accessToken
 			);
@@ -232,7 +233,7 @@ export const actions: Actions = {
 
 		try {
 			await obp_requests.post(
-				`/obp/dynamic-entity/${ENTITY_ACTIVITY_MONITORING_PERIOD_VERIFICATION}`,
+				entityPath(ENTITY_ACTIVITY_MONITORING_PERIOD_VERIFICATION),
 				body,
 				accessToken
 			);
@@ -334,7 +335,7 @@ export const actions: Actions = {
 
 		try {
 			const response = await obp_requests.put(
-				`/obp/dynamic-entity/${ENTITY_ACTIVITY}/${activityId}`,
+				`${entityPath(ENTITY_ACTIVITY)}/${activityId}`,
 				body,
 				accessToken
 			);
