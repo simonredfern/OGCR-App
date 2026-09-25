@@ -3,7 +3,6 @@
 	import { Copy, Check } from '@lucide/svelte';
 	import type { HealthSummary, ServiceHealthView } from '$lib/health-check/summarize';
 	import type { Backlog } from '$lib/chain/backlog';
-	import { HEARTBEAT_STATES, type HeartbeatState } from '$lib/chain/heartbeat';
 
 	let {
 		data,
@@ -17,7 +16,6 @@
 		 */
 		data: HealthSummary & {
 			chainMirrorChecked?: boolean;
-			chainState?: HeartbeatState | null;
 			backlog?: Backlog | null;
 			backlogError?: string | null;
 		};
@@ -477,35 +475,10 @@
 				</p>
 			</div>
 		{:else if data.chainMirrorChecked}
-			<!-- The chain mirror's state is summarised as a single phrase elsewhere
-			     ("Chain partial sync"), which says little on its own. This is
-			     where it is spelled out, with the current state marked. -->
-			<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" data-testid="chain-state-explained">
-				<h3 class="text-xl font-bold mb-1">What the chain status means</h3>
-				<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-					The app does not talk to the chain directly. OGCR-chain-cache copies chain state into
-					OBP on a schedule and writes a sync record at the end of every run; the chain status is
-					read from that record.
-				</p>
-				<dl class="space-y-3 text-sm">
-					{#each Object.entries(HEARTBEAT_STATES) as [state, { label, meaning }] (state)}
-						{@const current = state === data.chainState}
-						<div
-							class="rounded p-3 {current ? 'border-2 border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border border-gray-200 dark:border-gray-700'}"
-							aria-current={current ? 'true' : undefined}
-						>
-							<dt class="font-semibold">
-								{label}
-								{#if current}<span class="ml-2 text-xs font-normal text-blue-700 dark:text-blue-300">(current)</span>{/if}
-							</dt>
-							<dd class="text-gray-600 dark:text-gray-400 mt-1">{meaning}</dd>
-						</div>
-					{/each}
-				</dl>
-				<p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
-					Chain detail and recent on-chain activity: <a href="/chain" class="underline">the chain page</a>.
-				</p>
-			</div>
+			<p class="text-sm text-gray-500 dark:text-gray-400">
+				Chain detail, what each chain status means, and recent on-chain activity:
+				<a href="/chain" class="underline">the chain page</a>.
+			</p>
 		{/if}
 
 		{#if data.backlog}

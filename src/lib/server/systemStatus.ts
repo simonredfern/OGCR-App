@@ -10,13 +10,11 @@
 import { healthCheckRegistry, summarizeHealth, type HealthSummary } from '$lib/health-check';
 import { getChainSyncStatus, getTokenizationBacklog } from '$lib/chain/onChain';
 import type { Backlog } from '$lib/chain/backlog';
-import { deriveHeartbeat, type HeartbeatState } from '$lib/chain/heartbeat';
+import { deriveHeartbeat } from '$lib/chain/heartbeat';
 import { chainMirrorSnapshot, chainMirrorUncheckable } from '$lib/chain/mirrorHealth';
 
 export type SystemStatusData = HealthSummary & {
 	chainMirrorChecked: boolean;
-	/** The chain heartbeat's state, or null when it could not be read at all. */
-	chainState: HeartbeatState | null;
 	backlog: Backlog | null;
 	backlogError: string | null;
 };
@@ -30,16 +28,13 @@ export async function buildSystemStatus(accessToken: string | undefined): Promis
 	// token to do it with. Adding an always-unknown entry for logged-out
 	// visitors would drag the whole page's overall status to unknown while
 	// telling them nothing.
-	let chainState: HeartbeatState | null = null;
 	let backlog: Backlog | null = null;
 	let backlogError: string | null = null;
 
 	if (accessToken) {
 		try {
 			const status = await getChainSyncStatus(accessToken);
-			const heartbeat = deriveHeartbeat(status);
-			chainState = heartbeat.state;
-			const snapshot = chainMirrorSnapshot(heartbeat);
+			const snapshot = chainMirrorSnapshot(deriveHeartbeat(status));
 			snapshots[snapshot.service] = snapshot;
 		} catch (error) {
 			const message = error instanceof Error ? error.message : 'Unknown error';
@@ -61,7 +56,6 @@ export async function buildSystemStatus(accessToken: string | undefined): Promis
 	return {
 		...summarizeHealth(snapshots),
 		chainMirrorChecked: !!accessToken,
-		chainState,
 		backlog,
 		backlogError
 	};
