@@ -199,6 +199,7 @@ the two in step.
 | Breadcrumb         | §4.26         | not needed — see note below                                                                                                                                                    |
 | Pagination         | §4.27         | not yet ported                                                                                                                                                                 |
 | Tooltip            | §4.34         | not yet ported — build on `bits-ui`                                                                                                                                            |
+| Map / MapLegend    | —             | not yet ported — the reference for map styles; see [Map styles](#map-styles) below                                                                                             |
 
 The app layout renders a breadcrumb trail in the header for **every** route, built
 from the URL path against a `labelMap` in `src/routes/+layout.svelte`. A page-level
@@ -206,6 +207,24 @@ Breadcrumb on top of that reads as a duplicate, so §4.26 is deliberately not po
 Add new route segments to that `labelMap` instead, or the trail renders the raw
 lowercase segment. Port the component only if a page needs a breadcrumb _instead of_
 the header trail.
+
+### Map styles
+
+The design system now has a `Map` and a `MapLegend` component (package 1.3.0, newer than the 1.1.0 our
+tokens are pinned to). Use them as the reference for how this app's maps look: basemap, area fills and
+outlines, status colours, legend, attribution and zoom controls.
+
+- Storybook, live examples of each map:
+  [Components / Map / Carbon potential](https://ogcr-design-system.vercel.app/storybook/?path=/story/components-map--carbon-potential).
+  The same section also has the Campaign statuses, Minimal basemap, Selectable parcels, Supply shed and
+  Styling reference stories, and MapLegend has its own.
+- npm package: [@majistudio/ogcr-design-system](https://www.npmjs.com/package/@majistudio/ogcr-design-system).
+  Its `dist/map.css` restyles the map's controls onto the design system tokens; read it for the exact values.
+
+Upstream builds its map on MapLibre (`maplibre-gl`), with React. This app's maps
+(`src/lib/components/GeoJsonMap.svelte`, `src/lib/components/RegistryActivitiesMap.svelte`) use Leaflet, so
+the upstream component and `map.css` can't be used as they are: take the look from them, as for the other
+ports.
 
 ### Porting conventions
 
