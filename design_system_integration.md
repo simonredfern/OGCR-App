@@ -226,6 +226,26 @@ Upstream builds its map on MapLibre (`maplibre-gl`), with React. This app's maps
 the upstream component and `map.css` can't be used as they are: take the look from them, as for the other
 ports.
 
+#### Plan to bring the maps in line (not started)
+
+Agreed on 2026-11-10 as the way to do it; no code has changed yet. Keep Leaflet: upstream's basemaps are
+ordinary raster tiles, which Leaflet loads as they are, so neither MapLibre nor React is needed.
+
+1. Replace the OpenStreetMap tiles with upstream's light grey basemap (Esri "World Light Gray Base",
+   `server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer`), and add a
+   Map / Satellite switch (Esri "World Imagery") using the ported `ToggleGroup`.
+2. Take the area fills, outlines and status colours from design system tokens, matching the Carbon potential
+   and Campaign statuses stories. `GeoJsonMap.svelte` hard-codes `#3b82f6` today.
+3. Port `MapLegend` to Svelte, for the Activities map.
+4. Restyle Leaflet's zoom and attribution controls to match `map.css`.
+5. Show Map and MapLegend on `/design`, and update the component table above.
+
+**Before any of it ships: check the Esri terms and attribution rules.** Upstream uses these tiles with no API
+key. Esri's terms and attribution requirements differ from OpenStreetMap's, and what is fine for a demo may
+not be for a public production site. Find out whether the use needs an Esri account or key, what the
+attribution must say, and any limits on traffic or commercial use. If the terms don't fit, use a light grey
+basemap and satellite imagery from another provider with the same look.
+
 ### Porting conventions
 
 `Card.svelte` is the reference for the ones that follow.
